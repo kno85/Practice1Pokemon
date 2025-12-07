@@ -1,14 +1,18 @@
 package com.aca.acoders
 
-
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -21,7 +25,6 @@ import com.aca.acoders.data.PokemonViewModelFactory
 import com.aca.acoders.repository.PokemonRepository
 import com.aca.acoders.ui.screens.PokemonDetailScreen
 import com.aca.acoders.ui.screens.PokemonListScreen
-import com.aca.acoders.ui.screens.detail.DetailScreen
 import com.aca.acoders.ui.theme.Practice1Theme
 
 class MainActivity : ComponentActivity() {
@@ -29,62 +32,71 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
         setContent {
             Practice1Theme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    // 1. Crea el NavController
+
+                Surface(modifier = Modifier.fillMaxSize()) {
+
                     val navController = rememberNavController()
                     val repository = PokemonRepository()
-                    val viewModel: PokemonListViewModel = viewModel(
+
+                    val listViewModel: PokemonListViewModel = viewModel(
                         factory = PokemonViewModelFactory(repository)
                     )
-                    // 2. Configura el NavHost con las rutas
+
                     NavHost(
                         navController = navController,
-                        startDestination = "pokemonList", // Ruta inicial
-                        modifier = Modifier.padding(innerPadding)
+                        startDestination = "pokemonList",
+                        modifier = Modifier
+                            .fillMaxSize()
+                            // Respeta status bar + navigation bar
+                            .windowInsetsPadding(androidx.compose.foundation.layout.WindowInsets.statusBars)
+                            .windowInsetsPadding(androidx.compose.foundation.layout.WindowInsets.navigationBars)
+                            // Añade un pequeño margen extra arriba y abajo
+                            .padding(top = 8.dp, bottom = 8.dp)
                     ) {
-                        // Ruta para la lista de Pokémon
+
                         composable("pokemonList") {
                             PokemonListScreen(
-                                viewModel = viewModel,
+                                viewModel = listViewModel,
                                 onItemClick = { pokemon ->
-                                    navController.navigate("detail/${pokemon.name}")
                                     selectedItem = pokemon.name
-                                }                            )
+                                    navController.navigate("detail/${pokemon.name}")
+                                }
+                            )
                         }
+
                         composable(
                             route = "detail/{pokemonName}",
                             arguments = listOf(
                                 navArgument("pokemonName") {
-                                    // 2. Especifica el tipo de argumento.
                                     type = NavType.StringType
-                                    // Opcional: puedes hacerlo nullable o darle un defaultValue
                                     nullable = false
                                 }
                             )
-                        ) { backStackEntry ->
-                            // Aquí es donde recuperas el argumento:
-                            val pokemonName = backStackEntry.arguments?.getString("pokemonName")
+                        ) { entry ->
+                            val pokemonName = entry.arguments?.getString("pokemonName")
+
                             val detailViewModel: PokemonDetailViewModel = viewModel(
                                 factory = PokemonViewModelFactory(repository)
                             )
+
                             if (pokemonName != null) {
-                                PokemonDetailScreen (
+                                PokemonDetailScreen(
                                     viewModel = detailViewModel,
                                     pokemonName = pokemonName,
-                                    onNavigateBack = { navController.popBackStack() })
-                                }
+                                    onNavigateBack = { navController.popBackStack() }
+                                )
                             }
                         }
-                        }
                     }
-
                 }
             }
-
+        }
+    }
 
     companion object {
-        var selectedItem: String =""
+        var selectedItem: String = ""
     }
 }
