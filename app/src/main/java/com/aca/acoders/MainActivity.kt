@@ -1,5 +1,6 @@
 package com.aca.acoders
 
+import PokemonViewModel
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -20,7 +21,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.aca.acoders.data.PokemonDetailViewModel
-import com.aca.acoders.data.PokemonListViewModel
 import com.aca.acoders.data.PokemonViewModelFactory
 import com.aca.acoders.repository.PokemonRepository
 import com.aca.acoders.ui.screens.PokemonDetailScreen
@@ -41,7 +41,7 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     val repository = PokemonRepository()
 
-                    val listViewModel: PokemonListViewModel = viewModel(
+                    val listViewModel: PokemonViewModel = viewModel(
                         factory = PokemonViewModelFactory(repository)
                     )
 

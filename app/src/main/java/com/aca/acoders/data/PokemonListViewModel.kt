@@ -1,37 +1,37 @@
-package com.aca.acoders.data
-
-// Improved Code
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.activity.result.launch
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-
 import androidx.lifecycle.viewModelScope
 import com.aca.acoders.domain.Pokemon
 import com.aca.acoders.repository.PokemonRepository
 import kotlinx.coroutines.launch
 
-// 1. Suggestion: Use Dependency Injection
-class PokemonListViewModel(
-    private val pokemonRepository: PokemonRepository
-) : ViewModel() {
 
-    // 2. Suggestion: Expose an immutable LiveData object
-    private val _pokemonList = MutableLiveData<List<Pokemon>>()
-    val pokemonList: LiveData<List<Pokemon>> get() = _pokemonList
+class PokemonViewModel(private val repository: PokemonRepository) : ViewModel() {    var pokemonList =
+    mutableStateListOf<Pokemon>()
+    private var currentPage = 0
+    var isEndReached = false
+    var isLoading = mutableStateOf(false)
 
-    // You can call this during ViewModel initialization to load data automatically
     init {
-        loadPokemonList()
+        loadNextPage()
     }
 
-    // 3. Suggestion: Use coroutines for background operations and improve naming
-    fun loadPokemonList() {
-        // Use viewModelScope to launch a coroutine that is automatically
-        // cancelled when the ViewModel is cleared.
+    fun loadNextPage() {
+        if (isLoading.value || isEndReached) return
+
         viewModelScope.launch {
-            // Assuming getPokemonList is now a suspend function for asynchronous work
-            val result = pokemonRepository.getPokemonList()
-            _pokemonList.postValue(result?.pokemons)
+            isLoading.value = true
+            val results = repository.getPokemonList(currentPage, 20).pokemons
+
+            if (results.isEmpty()) {
+                isEndReached = true
+            } else {
+                pokemonList.addAll(results)
+                currentPage++
+            }
+            isLoading.value = false
         }
     }
 }
