@@ -9,6 +9,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aca.acoders.domain.Pokemon
 import com.aca.acoders.repository.PokemonRepository
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
@@ -16,7 +18,8 @@ import kotlinx.coroutines.launch
 
 class PokemonListViewModel(private val repository: PokemonRepository) : ViewModel() {
     private val _pokemonList = mutableStateListOf<Pokemon>()
-    
+    private var searchJob: Job? = null
+
     var searchQuery by mutableStateOf("")
         private set
 
@@ -45,6 +48,40 @@ class PokemonListViewModel(private val repository: PokemonRepository) : ViewMode
 
     fun onSearchQueryChange(newQuery: String) {
         searchQuery = newQuery
+        searchJob?.cancel()
+        
+        if (newQuery.isNotEmpty()) {
+            searchJob = viewModelScope.launch {
+                delay(500) // Debounce de 500ms
+                
+                // Si después del filtro local no hay resultados, buscamos en la API
+                val localResults = _pokemonList.any { it.name.contains(newQuery, ignoreCase = true) }
+                if (!localResults) {
+                    searchPokemonInApi(newQuery)
+                }
+            }
+        }
+    }
+
+    private suspend fun searchPokemonInApi(query: String) {
+        isLoading.value = true
+        try {
+            val result = repository.getPokemon(query.lowercase())
+            if (result != null) {
+                val newPokemon = Pokemon(
+                    name = result.name,
+                    url = "https://pokeapi.co/api/v2/pokemon/${result.id}/"
+                )
+                // Si no está ya en la lista, lo añadimos
+                if (_pokemonList.none { it.name == newPokemon.name }) {
+                    _pokemonList.add(newPokemon)
+                }
+            }
+        } catch (e: Exception) {
+            // Manejar error de búsqueda silenciosamente o loguear
+        } finally {
+            isLoading.value = false
+        }
     }
 
     fun loadNextPage() {
