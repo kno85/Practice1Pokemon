@@ -6,9 +6,7 @@ plugins {
 
 android {
     namespace = "com.aca.acoders"
-    compileSdk {
-        version = release(36)
-    }
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.aca.acoders"
@@ -50,14 +48,20 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
-    implementation(libs.androidx.navigation.compose) // <- AÑADE ESTA LÍNEA
-    // --- DEPENDENCIAS AÑADIDAS para Retrofit y Gson ---
+    implementation(libs.androidx.navigation.compose)
+    
+    // --- Retrofit y Gson ---
     implementation(libs.retrofit.core)
     implementation(libs.retrofit.converter.gson)
     implementation(libs.gson)
     implementation(libs.coil.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.compose.runtime.livedata)
+
+    // --- Koin ---
+    implementation(libs.koin.android)
+    implementation(libs.koin.androidx.compose)
+
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))

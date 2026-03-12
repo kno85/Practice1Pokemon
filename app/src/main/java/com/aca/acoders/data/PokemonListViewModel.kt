@@ -1,4 +1,5 @@
-import androidx.activity.result.launch
+package com.aca.acoders.data
+
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -7,9 +8,8 @@ import com.aca.acoders.domain.Pokemon
 import com.aca.acoders.repository.PokemonRepository
 import kotlinx.coroutines.launch
 
-
-class PokemonViewModel(private val repository: PokemonRepository) : ViewModel() {    var pokemonList =
-    mutableStateListOf<Pokemon>()
+class PokemonViewModel(private val repository: PokemonRepository) : ViewModel() {
+    var pokemonList = mutableStateListOf<Pokemon>()
     private var currentPage = 0
     var isEndReached = false
     var isLoading = mutableStateOf(false)

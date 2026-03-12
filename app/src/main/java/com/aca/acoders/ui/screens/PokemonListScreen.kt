@@ -1,6 +1,6 @@
 package com.aca.acoders.ui.screens
 
-import PokemonViewModel
+import com.aca.acoders.data.PokemonViewModel
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
