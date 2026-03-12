@@ -18,7 +18,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.aca.acoders.data.PokemonDetailViewModel
-import com.aca.acoders.data.PokemonViewModel
+import com.aca.acoders.data.PokemonListViewModel
+import com.aca.acoders.ui.screens.FavoritesScreen
 import com.aca.acoders.ui.screens.PokemonDetailScreen
 import com.aca.acoders.ui.screens.PokemonListScreen
 import com.aca.acoders.ui.theme.Practice1Theme
@@ -46,13 +47,29 @@ class MainActivity : ComponentActivity() {
                     ) {
 
                         composable("pokemonList") {
-                            // Inyectar con Koin
-                            val listViewModel: PokemonViewModel = koinViewModel()
+                            val listViewModel: PokemonListViewModel = koinViewModel()
                             PokemonListScreen(
                                 viewModel = listViewModel,
                                 onItemClick = { pokemon ->
                                     selectedItem = pokemon.name
                                     navController.navigate("detail/${pokemon.name}")
+                                },
+                                onNavigateToFavorites = {
+                                    navController.navigate("favorites")
+                                }
+                            )
+                        }
+
+                        composable("favorites") {
+                            val viewModel: PokemonListViewModel = koinViewModel()
+                            FavoritesScreen(
+                                viewModel = viewModel,
+                                onItemClick = { pokemon ->
+                                    selectedItem = pokemon.name
+                                    navController.navigate("detail/${pokemon.name}")
+                                },
+                                onNavigateBack = {
+                                    navController.popBackStack()
                                 }
                             )
                         }
@@ -67,8 +84,6 @@ class MainActivity : ComponentActivity() {
                             )
                         ) { entry ->
                             val pokemonName = entry.arguments?.getString("pokemonName")
-                            
-                            // Inyectar con Koin
                             val detailViewModel: PokemonDetailViewModel = koinViewModel()
 
                             if (pokemonName != null) {
