@@ -1,7 +1,10 @@
 package com.aca.acoders.data
 
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aca.acoders.domain.Pokemon
@@ -12,7 +15,19 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class PokemonListViewModel(private val repository: PokemonRepository) : ViewModel() {
-    var pokemonList = mutableStateListOf<Pokemon>()
+    private val _pokemonList = mutableStateListOf<Pokemon>()
+    
+    var searchQuery by mutableStateOf("")
+        private set
+
+    val filteredPokemonList by derivedStateOf {
+        if (searchQuery.isEmpty()) {
+            _pokemonList
+        } else {
+            _pokemonList.filter { it.name.contains(searchQuery, ignoreCase = true) }
+        }
+    }
+
     private var currentPage = 0
     var isEndReached = false
     var isLoading = mutableStateOf(false)
@@ -28,8 +43,12 @@ class PokemonListViewModel(private val repository: PokemonRepository) : ViewMode
         loadNextPage()
     }
 
+    fun onSearchQueryChange(newQuery: String) {
+        searchQuery = newQuery
+    }
+
     fun loadNextPage() {
-        if (isLoading.value || isEndReached) return
+        if (isLoading.value || isEndReached || searchQuery.isNotEmpty()) return
 
         viewModelScope.launch {
             isLoading.value = true
@@ -38,7 +57,7 @@ class PokemonListViewModel(private val repository: PokemonRepository) : ViewMode
             if (results.isEmpty()) {
                 isEndReached = true
             } else {
-                pokemonList.addAll(results)
+                _pokemonList.addAll(results)
                 currentPage++
             }
             isLoading.value = false
