@@ -61,7 +61,7 @@ private fun colorForType(typeName: String): Color = when (typeName.lowercase()) 
     else -> Color(0xFF607D8B)
 }
 private object StatRowDefaults {
-    const val MAX_STAT_VALUE = 255f
+    const val MAX_STAT_VALUE = 100f
     val STAT_NAME_WIDTH = 120.dp
     val STAT_VALUE_WIDTH = 36.dp
     val INDICATOR_HEIGHT = 10.dp
