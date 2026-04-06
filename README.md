@@ -37,9 +37,7 @@ El proyecto sigue una estructura organizada por capas:
 
 | Lista de Pokémon | Detalles y Estadísticas | Favoritos |
 | :---: | :---: | :---: |
-| <img width="300" alt="Lista" src="https://github.com/user-attachments/assets/88eec45b-0d20-485f-a3ba-1c64a967d500" /> | <img width="300" alt="Detalle" src="https://github.com/user-attachments/assets/3bbcdafc-937f-4faf-ae85-db2f5b7e3df7" /> | <img width="300" alt="Favoritos" src="https://github.com/user-attachments/assets/3bbcdafc-937f-4faf-ae85-db2f5b7e3df7" /> |
-
-> *(Nota: Las imágenes son ilustrativas y deben actualizarse con capturas reales)*
+| <img width="300" alt="Lista" src="https://storage.googleapis.com/content-studio-media/0672e128cc1a9e334547926b0efc352796e68f3a39e80a0680c2f1f0a2072fec.png" /> | <img width="300" alt="Detalle" src="https://storage.googleapis.com/content-studio-media/1195655519ec5579b699a7702677cf743956f4e195f2692e104e7be007be4f9d.png" /> | <img width="300" alt="Favoritos" src="https://storage.googleapis.com/content-studio-media/3a79f4227f7f329241940989f5f643e19484803099908ee50f6390a8a614d9f6.png" /> |
 
 ## ⚙️ Instalación y Configuración
 
